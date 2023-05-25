@@ -72,7 +72,7 @@ function addDatabase(){
                 {
                     type: 'list',
                     message: 'What would you like to add or update on the database?',
-                    name: 'shape',
+                    name: 'change',
                     choices: [
                         "add a department",
                         "add a role",
@@ -82,14 +82,57 @@ function addDatabase(){
                 },
             ])
             .then((response) => {
-                switch (response.shape) {
+                switch (response.change) {
                     case "add a department":
                         addDepartment()
                         break;
                     case "add a role":
                         addRole()
                         break;
-                    case "View all employees":
+                    case "add an employee":
+                        addEmployee()
+                        break;
+                    case "update an employee's information":
+                        updateEmployee()
+                        break;
+                })
+            }
+
+function addDepartment() {
+//this function should ask for information required to add a new department and add it
+}
+function addRole() {
+//this function should ask for the information required to add a new role and add it 
+}
+function addEmployee(){
+//this function should ask for the information required to add a new employee and and them
+}
+function updateEmployee(){
+//this function should ask for the information to update an employee and update them
+
+inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    message: 'What would you like to add or update on the database?',
+                    name: 'change',
+                    choices: [
+                        "add a department",
+                        "add a role",
+                        "add an employee",
+                        "update an employee's information",
+                    ]
+                },
+            ])
+            .then((response) => {
+                switch (response.change) {
+                    case "add a department":
+                        addDepartment()
+                        break;
+                    case "add a role":
+                        addRole()
+                        break;
+                    case "add an employee":
                         addEmployee()
                         break;
                     case "update an employee's information":
@@ -99,4 +142,5 @@ function addDatabase(){
             }
 
 
+}
 
