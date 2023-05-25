@@ -1,3 +1,4 @@
+let employeeName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
 const db = sql.createConnection(
@@ -75,9 +76,10 @@ function addDatabase(){
                     name: 'change',
                     choices: [
                         "add a department",
+                        "update an employee's information",
                         "add a role",
                         "add an employee",
-                        "update an employee's information",
+
                     ]
                 },
             ])
@@ -95,11 +97,29 @@ function addDatabase(){
                     case "update an employee's information":
                         updateEmployee()
                         break;
-                })
-            }
-
+                }
+            })}
 function addDepartment() {
-//this function should ask for information required to add a new department and add it
+    inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: 'What is the name of the department you would like to add?',
+            name: 'newDepartment',
+            
+        },
+    ])
+    .then((response) => {
+db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
+            nameID = results;
+            const employeeID = nameID.filter(function(person) {
+                if (person.name === nameToTest){
+                    console.log (person.id)
+                    updateEmployee(person.id)
+                    }
+              });        
+          });
+
 }
 function addRole() {
 //this function should ask for the information required to add a new role and add it 
@@ -109,38 +129,31 @@ function addEmployee(){
 }
 function updateEmployee(){
 //this function should ask for the information to update an employee and update them
-
-inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    message: 'What would you like to add or update on the database?',
-                    name: 'change',
-                    choices: [
-                        "add a department",
-                        "add a role",
-                        "add an employee",
-                        "update an employee's information",
-                    ]
-                },
-            ])
-            .then((response) => {
-                switch (response.change) {
-                    case "add a department":
-                        addDepartment()
-                        break;
-                    case "add a role":
-                        addRole()
-                        break;
-                    case "add an employee":
-                        addEmployee()
-                        break;
-                    case "update an employee's information":
-                        updateEmployee()
-                        break;
-                })
+// db.query('SELECT CONCAT(first_name," ",last_name) AS name FROM employee ORDER BY last_name ', function (err, results) {
+//     employeeName = results.map(piece=>Object.values(piece));
+//     console.log(results);
+//     console.log (employeeName); 
+//   });
+//   db.query('SELECT first_name,last_name, id FROM employee ORDER BY last_name', function (err, results) {
+//     const employeeId = results.map(piece=>Object.values(piece));
+//     console.log(results);
+//     console.log (employeeId); 
+//   });
+// inquirer
+//             .prompt([
+//                 {
+//                     type: 'list',
+//                     message: 'For whom would you like to update the database?',
+//                     name: 'change',
+//                     choices: employeeName
+//                 },
+//             ])
+//             .then((response) => {
+//                 console.log(response.change)
+                
+                
+//                 })
             }
 
 
-}
 
