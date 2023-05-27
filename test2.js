@@ -16,6 +16,8 @@ const db = sql.createConnection(
 db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
     console.log (results)
     const column = results.map(piece=> Object.values(piece));
+   
+    console.table(results, ["id", "name"])
     console.table(results,["name","id"]);
     console.table (column); 
 });

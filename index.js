@@ -1,4 +1,4 @@
-let employeeName;
+let nameList;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
 const db = sql.createConnection(
@@ -84,6 +84,7 @@ function addDatabase(){
                 },
             ])
             .then((response) => {
+                console.log ("made it 1");
                 switch (response.change) {
                     case "add a department":
                         addDepartment()
@@ -95,7 +96,8 @@ function addDatabase(){
                         addEmployee()
                         break;
                     case "update an employee's information":
-                        updateEmployee()
+                    console.log("made it 2")    
+                    update();
                         break;
                 }
             })}
@@ -106,21 +108,76 @@ function addDepartment() {
             type: 'list',
             message: 'What is the name of the department you would like to add?',
             name: 'newDepartment',
-            
         },
     ])
     .then((response) => {
-db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
+        db.query(`INSERT INTO department (name) VALUES (${resonse.newDepartment})`);
+        restart();})};
+                    
+function update(){
+    console.log ("made it 3")
+    db.query('SELECT CONCAT(first_name," ",last_name) AS name FROM employee ORDER BY last_name', function (err, results) {
+        tabledNames = results;
+    const useNames=tabledNames.map(name=>{
+        const pObj = JSON.parse(JSON.stringify(name));
+        let newName = Object.values(pObj);
+        return newName;});
+        names=useNames.flat();
+        console.log(names);
+        updateE(names);
+})};
+    
+function updateE(nameList){
+inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: 'Whose data would you like to change?',
+            name: 'change',
+            choices: nameList
+        },
+    ])
+    .then((response) => {
+       choice = response;
+       console.log (choice)
+       changeHow(choice);
+    })  
+
+    };
+
+    function changeHow(choice){
+    db.query('SELECT CONCAT(first_name," ",last_name) AS name FROM employee ORDER BY last_name', function (err, results) {
+        console.table(results);
+
+    })}
+
+
+
+
+    db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
             nameID = results;
             const employeeID = nameID.filter(function(person) {
-                if (person.name === nameToTest){
+                if (person.name === 'Ilie Albenscu'){
                     console.log (person.id)
                     updateEmployee(person.id)
                     }
               });        
           });
-
-}
+function restart(){
+inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: 'Would you like to continue and do something else or stop here?',
+            name: 'reStart',
+            options: ["Do something more","Stop here"]
+        },
+    ])
+    .then((response) => {
+        if (response.reStart==="Do something more"){
+            init();
+        }
+})}
 function addRole() {
 //this function should ask for the information required to add a new role and add it 
 }

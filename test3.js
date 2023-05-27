@@ -6,3 +6,12 @@ let arr = [
     { acc[firstName] = x; return acc; }, {})
   
   console.table(arrNoIndex);
+
+  var myObject = {
+    "ircEvent": "PRIVMSG",
+    "method": "newURI",
+    "regex": "^http://.*"
+};
+delete myObject.regex;
+
+console.log(myObject);
