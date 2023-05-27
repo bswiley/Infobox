@@ -146,7 +146,7 @@ inquirer
     };
 
     function changeHow(choice){
-    db.query('SELECT CONCAT(first_name," ",last_name) AS name FROM employee ORDER BY last_name', function (err, results) {
+    db.query('SELECT * FROM employee WHEN CONCAT (employee.first_name," ",employee.last_name) = choice', function (err, results) {
         console.table(results);
 
     })}
