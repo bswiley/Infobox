@@ -150,10 +150,10 @@ inquirer
     };
 
     function changeHow(firstName){
-       let name = toString(firstName)
-       console.log("name = "+name);
-    db.query(`SELECT * FROM employee WHERE first_name = ${name}`, function (err, results) {
-        console.table(results);})};
+        console.log("firstName = "+firstName)
+       db.query(`SELECT * FROM employee WHERE first_name = "${firstName}"`, function (err, results) {
+        let test = results;
+        console.table(test);})};
 
 
 
