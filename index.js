@@ -46,7 +46,6 @@ function init() {
             }
         })
 }
-
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
@@ -154,8 +153,32 @@ inquirer
        db.query(`SELECT * FROM employee WHERE first_name = "${firstName}"`, function (err, results) {
         let test = results;
         console.table(test);})};
+        
+        inquirer
+    .prompt([
+        {
+            type: 'list',
+            message: `What would you like to change for ${firstName}`,
+            name: 'change',
+            choices: ["role_id","manager_id"]
+        },
+    ])
+    .then((response) => {
+        switch (response.change) {
+            case "role_id":
+                changeRole()
+                break;
+            case "manager_id":
+                changeId();
+        }});
 
+function changeRole(){
+ console.log("Change Role")
+}
+function changeId(){
+    console.log("Change Id")
 
+}
 
 
     db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
