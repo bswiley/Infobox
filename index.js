@@ -1,4 +1,4 @@
-let nameList;
+let firstName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
 const db = sql.createConnection(
@@ -139,8 +139,9 @@ inquirer
     ])
     .then((response) => {
        choice = response;
+       firstName=choice.split(' ',1);
        console.log (choice)
-       changeHow(choice);
+       changeHow(firstName);
     })  
 
     };
