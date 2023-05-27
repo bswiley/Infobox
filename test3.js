@@ -2,8 +2,9 @@ let str = '1 - Abdolreza Bunrueang';
 let list = str.split(" ",4);
 let number = list[0];
 let firstName = list[2];
-let lastName 
+let lastName = list[3];
 console.log(list);
 console.table(list);
 console.log(number);
-console.log (theName);
+console.log (firstName);
+console.log (lastName);

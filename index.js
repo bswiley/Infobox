@@ -149,7 +149,7 @@ inquirer
        list=choice.split(' ',4);
        employeesId = list[0];
        firstName = list[2]
-       lastName = list []
+       lastName = list [3]
        console.log ("employeesId = "+employeesId)
        console.log ("firstName = "+firstName)
        changeHow(firstName);
@@ -199,7 +199,7 @@ function changeHow(firstName){
                     },
                 ])
                 .then((response) => {
-                lastName(response.newName)})
+                lastNameChange(response.newName)})
             break;
             case`${firstName}'s role_id`:
             roleId()
@@ -217,8 +217,8 @@ function firstNameChange(newName){
         console.log ("made it here")
         restart()})
 }
-function lastName(newName){
-    db.query(`UPDATE employee SET first_name = "${newName}" WHERE id = "${employeesId}"`, function (err, results) {
+function lastNameChange(changeName){
+    db.query(`UPDATE employee SET last_name = "${changeName}" WHERE id = "${employeesId}"`, function (err, results) {
         let test = results});
     db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
