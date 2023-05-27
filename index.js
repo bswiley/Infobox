@@ -14,6 +14,7 @@ const db = sql.createConnection(
 );
 
 function init() {
+    console.clear()
     inquirer
         .prompt([
             {
@@ -138,19 +139,21 @@ inquirer
         },
     ])
     .then((response) => {
-       choice = response;
+       choice = response.change;
+       console.log ("Choice = "+choice)
        firstName=choice.split(' ',1);
-       console.log (choice)
+       console.log ("Choice = "+choice)
+       console.log ("firstName = "+firstName)
        changeHow(firstName);
     })  
 
     };
 
-    function changeHow(choice){
-    db.query('SELECT * FROM employee WHEN CONCAT (employee.first_name," ",employee.last_name) = choice', function (err, results) {
-        console.table(results);
-
-    })}
+    function changeHow(firstName){
+       let name = toString(firstName)
+       console.log("name = "+name);
+    db.query(`SELECT * FROM employee WHERE first_name = ${name}`, function (err, results) {
+        console.table(results);})};
 
 
 
