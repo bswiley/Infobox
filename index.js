@@ -1,4 +1,6 @@
+let employeesId;
 let firstName;
+let lastName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
 const db = sql.createConnection(
@@ -116,8 +118,10 @@ function addDepartment() {
                     
 function update(){
     console.log ("made it 3")
-    db.query('SELECT CONCAT(first_name," ",last_name) AS name FROM employee ORDER BY last_name', function (err, results) {
+    db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
+        console.log(tabledNames);
+        console.table(tabledNames);
     const useNames=tabledNames.map(name=>{
         const pObj = JSON.parse(JSON.stringify(name));
         let newName = Object.values(pObj);
@@ -125,7 +129,9 @@ function update(){
         names=useNames.flat();
         console.log(names);
         updateE(names);
-})};
+})
+
+};
     
 function updateE(nameList){
 inquirer
@@ -140,8 +146,11 @@ inquirer
     .then((response) => {
        choice = response.change;
        console.log ("Choice = "+choice)
-       firstName=choice.split(' ',1);
-       console.log ("Choice = "+choice)
+       list=choice.split(' ',4);
+       employeesId = list[0];
+       firstName = list[2]
+       lastName = list []
+       console.log ("employeesId = "+employeesId)
        console.log ("firstName = "+firstName)
        changeHow(firstName);
     })  
@@ -150,7 +159,7 @@ inquirer
 
 function changeHow(firstName){
         console.log("firstName = "+firstName)
-       db.query(`SELECT * FROM employee WHERE first_name = "${firstName}"`, function (err, results) {
+       db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err, results) {
         let test = results;
         console.table(test);})
     
@@ -200,16 +209,22 @@ function changeHow(firstName){
             break;
                 }})};
 function firstNameChange(newName){
-    db.query(`UPDATE employee SET first_name = "${newName}" WHERE first_name = "${firstName}"`, function (err, results) {
+    db.query(`UPDATE employee SET first_name = "${newName}" WHERE id = "${employeesId}"`, function (err, results) {
         let test = results});
-    db.query(`SELECT * FROM employee WHERE first_name = "${newName}"`, function (err,results) {
+    db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
         console.log ("made it here")
         restart()})
 }
 function lastName(newName){
-
+    db.query(`UPDATE employee SET first_name = "${newName}" WHERE id = "${employeesId}"`, function (err, results) {
+        let test = results});
+    db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
+        console.log (`You've just changed ${firstName}'s entry accordingly:`)
+        console.table (results)
+        console.log ("made it here")
+        restart()})
 }
 function roleId(){
 
@@ -245,7 +260,9 @@ inquirer.prompt([
     .then((response) => {
         if (response.reStart==="Do something more"){
             init();
-        }else{console.log("quitting")}
+        }else{
+            process.exit(0)
+        }
 })}
 function addRole() {
 //this function should ask for the information required to add a new role and add it 
