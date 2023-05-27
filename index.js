@@ -65,7 +65,7 @@ function viewRoles() {
         };
 function viewEmployees() {
 // supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
-            db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
+            db.query('SELECT * From employeee', function (err, results) {
                 console.table(results);
                 restart();
               })
