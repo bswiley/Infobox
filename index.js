@@ -148,39 +148,104 @@ inquirer
 
     };
 
-    function changeHow(firstName){
+function changeHow(firstName){
         console.log("firstName = "+firstName)
        db.query(`SELECT * FROM employee WHERE first_name = "${firstName}"`, function (err, results) {
         let test = results;
-        console.table(test);})};
+        console.table(test);})
+    
+        inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: `What part of ${firstName}'s data would you like to change?`,
+                name: 'what',
+                choices: [`${firstName}'s first_name`,
+                `${firstName}'s last_name`,
+                `${firstName}'s role_id`,
+                `${firstName}'s manager_id`]
+            },
+        ])
+        .then((response) => {
+           switch(response.what){
+            case `${firstName}'s first_name`:
+                inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        message: `What should ${firstName}'s new first name be?`,
+                        name: 'newName',
+                    },
+                ])
+                .then((response) => {
+                firstNameChange(response.newName)});
+            break;
+            case `${firstName}'s last_name`:
+                inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        message: `What should ${firstName}'s new last name be?`,
+                        name: 'newName',
+                    },
+                ])
+                .then((response) => {
+                lastName(response.newName)})
+            break;
+            case`${firstName}'s role_id`:
+            roleId()
+            break;
+            case `${firstName}'s manager_id`:
+            managerId
+            break;
+                }})};
+function firstNameChange(newName){
+    db.query(`UPDATE employee SET first_name = "${newName}" WHERE first_name = "${firstName}"`, function (err, results) {
+        let test = results});
+    db.query(`SELECT * FROM employee WHERE first_name = "${newName}"`, function (err,results) {
+        console.log (`You've just changed ${firstName}'s entry accordingly:`)
+        console.table (results)
+        console.log ("made it here")
+        restart()})
+}
+function lastName(newName){
 
+}
+function roleId(){
+
+}
+function managerId(){
 
 }
 
 
-    db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
-            nameID = results;
-            const employeeID = nameID.filter(function(person) {
-                if (person.name === 'Ilie Albenscu'){
-                    console.log (person.id)
-                    updateEmployee(person.id)
-                    }
-              });        
-          });
+
+
+
+
+    // db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
+    //         nameID = results;
+    //         const employeeID = nameID.filter(function(person) {
+    //             if (person.name === 'Ilie Albenscu'){
+    //                 console.log (person.id)
+    //                 updateEmployee(person.id)
+    //                 }
+    //           });        
+    //       });
 function restart(){
-inquirer
-    .prompt([
+console.log ("made it here, too")
+inquirer.prompt([
         {
             type: 'list',
-            message: 'Would you like to continue and do something else or stop here?',
+            message: 'Would you like to continue and do something more or stop here?',
             name: 'reStart',
-            options: ["Do something more","Stop here"]
+            choices: ["Do something more","Stop here"]
         },
     ])
     .then((response) => {
         if (response.reStart==="Do something more"){
             init();
-        }
+        }else{console.log("quitting")}
 })}
 function addRole() {
 //this function should ask for the information required to add a new role and add it 
