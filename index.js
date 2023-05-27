@@ -52,19 +52,22 @@ init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
     db.query('SELECT * FROM department', function (err, results) {
-        console.log(results);
+        console.table(results);
+        restart();
       })
     };
 function viewRoles() {
 // supposed to diplay the id, title, department, and salary of the role
         db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
-            console.log(results);
+            console.table(results);
+            restart();
           })
         };
 function viewEmployees() {
 // supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
             db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
-                console.log(results);
+                console.table(results);
+                restart();
               })
             };
     
@@ -266,7 +269,37 @@ inquirer.prompt([
 })}
 function addRole() {
 //this function should ask for the information required to add a new role and add it 
-}
+db.query('SELECT role.title, role.salary, CONCAT (department.id," - ",department.name) as department FROM role  JOIN department ON department.id = role.department_id;', function (err, results) {
+    console.table(results);
+  })
+
+inquirer.prompt([
+    {
+        type: 'input',
+        message: 'What is the title of the new role?',
+        name: 'roleTitle',
+    },
+    {
+        type: 'input',
+        message: 'What is the salary for the new role?',
+        name: 'roleSalary'
+    },
+    {
+        type: 'input',
+        message: 'What is the number or the department this role is connected with?',
+        name: 'departmentConnection'
+    }
+])
+.then((response) => {
+    db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${response.roleTitle}", ${respose.roleSalary},${response.departmentConnection});"`, function (err, results) {
+        let test = results});
+        console.log ("made it here");
+    db.query(`SELECT * FROM role WHERE title = "${response.roleTitle}"`, function (err,results) {
+        console.log (`You've just changed ${firstName}'s entry accordingly:`)
+        console.table (results)
+        console.log ("made it here")
+        restart()})});}
+
 function addEmployee(){
 //this function should ask for the information required to add a new employee and and them
 }
