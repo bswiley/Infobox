@@ -51,14 +51,14 @@ function init() {
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
-    db.query('SELECT * FROM department', function (err, results) {
+    db.query('SELECT id AS department_id, name AS department FROM department', function (err, results) {
         console.table(results);
         restart();
       })
     };
 function viewRoles() {
 // supposed to diplay the id, title, department, and salary of the role
-        db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
+        db.query('SELECT role.id AS role_id, role.title AS role, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
             console.table(results);
             restart();
           })
