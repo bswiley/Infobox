@@ -116,10 +116,11 @@ function addDepartment() {
         },
     ])
     .then((response) => {
-         console.log("made it to 118")       
-        db.query(`INSERT INTO department (name) VALUES ("${response.newDepartment}")`, function (err, results));
-        
-        
+        let department = response.NewDepartment      
+        db.query(`INSERT INTO department (name) VALUES ("${department}")`, function (err, results){});
+        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        console.table(results)
+    });
         restart();})};
                     
 function update(){
@@ -254,7 +255,7 @@ function managerId(){
     //           });        
     //       });
 function restart(){
-console.log ("made it 254")
+console.log ("made it 258")
 inquirer.prompt([
         {
             type: 'list',
@@ -272,10 +273,21 @@ inquirer.prompt([
 })}
 //this function should ask for the information required to add a new role and add it 
 function addRole() {
-db.query('SELECT role.title, role.salary, CONCAT (department.id," - ",department.name) as department FROM role  JOIN department ON department.id = role.department_id;', function (err, results) {
-    console.table(results);
-  })
-
+    console.log("made it 110)")
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the name of the department you would like to add?',
+            name: 'newDepartment',
+        },
+    ])
+    .then((response) => {
+        let department = response.NewDepartment      
+        db.query(`INSERT INTO role (name) VALUES ("${department}")`, function (err, results){});
+        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        console.table(results)
+    });
+        restart();})};
 inquirer.prompt([
     {
         type: 'input',
