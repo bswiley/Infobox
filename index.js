@@ -81,15 +81,14 @@ function addDatabase(){
                     name: 'change',
                     choices: [
                         "add a department",
-                        "update an employee's information",
                         "add a role",
                         "add an employee",
-
+                        "update an employee's information",
                     ]
                 },
             ])
             .then((response) => {
-                console.log ("made it 1");
+                console.log ("made it 91");
                 switch (response.change) {
                     case "add a department":
                         addDepartment()
@@ -101,7 +100,7 @@ function addDatabase(){
                         addEmployee()
                         break;
                     case "update an employee's information":
-                    console.log("made it 2")    
+                    console.log("made it 103")    
                     update();
                         break;
                 }
@@ -116,11 +115,12 @@ function addDepartment() {
         },
     ])
     .then((response) => {
-        db.query(`INSERT INTO department (name) VALUES (${resonse.newDepartment})`);
+         console.log("made it to 118")       
+        db.query(`INSERT INTO department (name) VALUES ("${resonse.newDepartment}")`);
         restart();})};
                     
 function update(){
-    console.log ("made it 3")
+    console.log ("made it 123")
     db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
         console.log(tabledNames);
@@ -217,7 +217,7 @@ function firstNameChange(newName){
     db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 220")
         restart()})
 }
 function lastNameChange(changeName){
@@ -226,7 +226,7 @@ function lastNameChange(changeName){
     db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 229")
         restart()})
 }
 function roleId(){
@@ -251,7 +251,7 @@ function managerId(){
     //           });        
     //       });
 function restart(){
-console.log ("made it here, too")
+console.log ("made it 254")
 inquirer.prompt([
         {
             type: 'list',
@@ -293,11 +293,11 @@ inquirer.prompt([
 .then((response) => {
     db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${response.roleTitle}", ${respose.roleSalary},${response.departmentConnection});"`, function (err, results) {
         let test = results});
-        console.log ("made it here");
+        console.log ("made it 296");
     db.query(`SELECT * FROM role WHERE title = "${response.roleTitle}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 300")
         restart()})});}
 
 function addEmployee(){
