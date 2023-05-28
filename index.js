@@ -273,17 +273,32 @@ inquirer.prompt([
 })}
 //this function should ask for the information required to add a new role and add it 
 function addRole() {
+    db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
+            tabledDepartments = results;
+            console.log(tabledDepartments);
+            console.table(tabledDepartments);
+        const useDepartments=tabledDepartments.map(department=>{
+            const pObj = JSON.parse(JSON.stringify(department));
+            let newDepartment = Object.values(pObj);
+            return newDepartment;});
+            departments=useDepartments.flat();
+            console.log(departments);   
+    });
+    
+    
+    
+    
     console.log("made it 110)")
     inquirer.prompt([
         {
             type: 'input',
-            message: 'What is the name of the department you would like to add?',
-            name: 'newDepartment',
+            message: 'What is the name of the role you would like to add?',
+            name: 'newRole',
         },
     ])
     .then((response) => {
-        let department = response.NewDepartment      
-        db.query(`INSERT INTO role (name) VALUES ("${department}")`, function (err, results){});
+        let role = response.NewRole      
+        db.query(`INSERT INTO role (name) VALUES ("${role}")`, function (err, results){});
         db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
         console.table(results)
     });
