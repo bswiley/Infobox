@@ -34,5 +34,7 @@ VALUES
 ("Hanna","Pereira",4, 4),
 ("Maxim","Afinogenou",5 ,1),
 ("Yukio","Park",6 ,1);
+
+CREATE TABLE manager SELECT * FROM employee;
        
 
