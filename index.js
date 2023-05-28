@@ -1,3 +1,5 @@
+let names;
+let addOrChange;
 let employeesId;
 let firstName;
 let lastName;
@@ -43,7 +45,7 @@ function init() {
                     viewEmployees()
                     break;
                 case "Add to or update the database":
-                    addDatabase()
+                    changeDatabase()
                     break;
             }
         })
@@ -71,7 +73,7 @@ function viewEmployees() {
               })
             };
     
-function addDatabase(){
+function changeDatabase(){
 // Asks questions and directs to function to add/update desired information in database
             inquirer
             .prompt([
@@ -98,11 +100,13 @@ function addDatabase(){
                         addRole()
                         break;
                     case "add an employee":
-                        addEmployee()
+                    addOrChange = add    
+                    addEmployee()
                         break;
                     case "update an employee's information":
-                    console.log("made it 103")    
-                    update();
+                    console.log("made it 103") 
+                    addOrChange = Change;   
+                    makeNameList();
                         break;
                 }
             })}
@@ -123,7 +127,7 @@ function addDepartment() {
     });
         restart();})};
                     
-function update(){
+function makeNameList(){
     console.log ("made it 123")
     db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
@@ -135,7 +139,13 @@ function update(){
         return newName;});
         names=useNames.flat();
         console.log(names);
-        updateE(names);
+        if(addOrChange==="Change"){
+            updateE(names);
+        } 
+        else if(addOrChange==="add"){
+            roleLister();
+        }
+        
 })
 
 };
@@ -176,10 +186,10 @@ function changeHow(firstName){
                 type: 'list',
                 message: `What part of ${firstName}'s data would you like to change?`,
                 name: 'what',
-                choices: [`${firstName}'s first_name`,
-                `${firstName}'s last_name`,
-                `${firstName}'s role_id`,
-                `${firstName}'s manager_id`]
+                choices: [`${firstName}'s first name`,
+                `${firstName}'s last name`,
+                `${firstName}'s role`,
+                `${firstName}'s manager`]
             },
         ])
         .then((response) => {
@@ -318,12 +328,28 @@ function addRole() {
 
 //this function should ask for the information required to add a new employee and and them
 function addEmployee(){
+    db.query("SELECT CONCAT(id," - ",first_name," ",last_name) AS manager FROM employee", function (err, results){
+        tabledDepartments = results;
+        console.log(tabledDepartments);
+        console.table(tabledDepartments);
+    const useDepartments=tabledDepartments.map(department=>{
+        const pObj = JSON.parse(JSON.stringify(department));
+        let newDepartment = Object.values(pObj);
+        return newDepartment;});
+        departments=useDepartments.flat();
+        console.log(departments); 
+    
     inquirer.prompt([
 {
     type: 'input',
-    message: 'What is the first_name name of the role you would like to add?',
-    name: 'newRole',
+    message: 'What is the first_name of the new employee?',
+    name: 'newFirst',
     },
+    {
+        type: 'input',
+        message: 'What is the last_name of the new employee?',
+        name: 'newLast',
+        },
     {  
     type: 'list',
     message: 'What department is the role connected to?',
