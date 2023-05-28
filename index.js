@@ -287,9 +287,9 @@ function addRole() {
     console.log("made it 287)")
     inquirer.prompt([
         {
-            type: 'input',
-            message: 'What is the name of the role you would like to add?',
-            name: 'newRole',
+        type: 'input',
+        message: 'What is the name of the role you would like to add?',
+        name: 'newRole',
         },
         {  
         type: 'list',
@@ -306,41 +306,37 @@ function addRole() {
 
     ])
     .then((response) => {
-        let role = response.NewRole      
-        db.query(`INSERT INTO role (name) VALUES ("${role}")`, function (err, results){});
-        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        const { newRole, owningDepartment, assignedSalary } = response 
+        console.log(owningDepartment)  
+        const dep = split(owningDepartment,3)
+        console.log(dep[0],dep[1],dep[2])   
+        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRole}","${assignedSalary}","${dep}")`, function (err, results){});
+        db.query(`SELECT * FROM department WHERE name = "${newRole}")`, function (err, results){console.log(`${department} added to departments`);
         console.table(results)
     });
         restart();})};
-inquirer.prompt([
-    {
-        type: 'input',
-        message: 'What is the title of the new role?',
-        name: 'roleTitle',
-    },
-    {
-        type: 'input',
-        message: 'What is the salary for the new role?',
-        name: 'roleSalary'
-    },
-    {
-        type: 'input',
-        message: 'What is the number or the department this role is connected with?',
-        name: 'departmentConnection'
-    }
-])
-.then((response) => {
-    db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${response.roleTitle}", ${respose.roleSalary},${response.departmentConnection});"`, function (err, results) {
-        let test = results});
-        console.log ("made it 296");
-    db.query(`SELECT * FROM role WHERE title = "${response.roleTitle}"`, function (err,results) {
-        console.log (`You've just changed ${firstName}'s entry accordingly:`)
-        console.table (results)
-        console.log ("made it 300")
-        restart()})});}
 
-function addEmployee(){
 //this function should ask for the information required to add a new employee and and them
+function addEmployee(){
+    inquirer.prompt([
+{
+    type: 'input',
+    message: 'What is the first_name name of the role you would like to add?',
+    name: 'newRole',
+    },
+    {  
+    type: 'list',
+    message: 'What department is the role connected to?',
+    name: 'owningDepartment',
+    options: departments     
+    
+    },
+    {
+    type: 'input',
+    message: 'What is the salary of this role?',
+    name: 'assignedSalary'
+    }
+
 }
 function updateEmployee(){
 //this function should ask for the information to update an employee and update them
