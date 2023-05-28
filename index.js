@@ -91,7 +91,8 @@ function addDatabase(){
                 console.log ("made it 91");
                 switch (response.change) {
                     case "add a department":
-                        addDepartment()
+                    console.log("made it 94");   
+                    addDepartment()
                         break;
                     case "add a role":
                         addRole()
@@ -106,17 +107,19 @@ function addDatabase(){
                 }
             })}
 function addDepartment() {
-    inquirer
-    .prompt([
+   console.log("made it 110)")
+    inquirer.prompt([
         {
-            type: 'list',
+            type: 'input',
             message: 'What is the name of the department you would like to add?',
             name: 'newDepartment',
         },
     ])
     .then((response) => {
          console.log("made it to 118")       
-        db.query(`INSERT INTO department (name) VALUES ("${resonse.newDepartment}")`);
+        db.query(`INSERT INTO department (name) VALUES ("${response.newDepartment}")`, function (err, results));
+        
+        
         restart();})};
                     
 function update(){
@@ -267,8 +270,8 @@ inquirer.prompt([
             process.exit(0)
         }
 })}
-function addRole() {
 //this function should ask for the information required to add a new role and add it 
+function addRole() {
 db.query('SELECT role.title, role.salary, CONCAT (department.id," - ",department.name) as department FROM role  JOIN department ON department.id = role.department_id;', function (err, results) {
     console.table(results);
   })
