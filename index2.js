@@ -51,14 +51,14 @@ function init() {
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
-    db.query('SELECT * FROM department', function (err, results) {
+    db.query('SELECT id AS department_id, name AS department FROM department', function (err, results) {
         console.table(results);
         restart();
       })
     };
 function viewRoles() {
 // supposed to diplay the id, title, department, and salary of the role
-        db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
+        db.query('SELECT department.name AS department, role.id AS role_id, role.title AS role, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
             console.table(results);
             restart();
           })
@@ -81,18 +81,18 @@ function addDatabase(){
                     name: 'change',
                     choices: [
                         "add a department",
-                        "update an employee's information",
                         "add a role",
                         "add an employee",
-
+                        "update an employee's information",
                     ]
                 },
             ])
             .then((response) => {
-                console.log ("made it 1");
+                console.log ("made it 91");
                 switch (response.change) {
                     case "add a department":
-                        addDepartment()
+                    console.log("made it 94");   
+                    addDepartment()
                         break;
                     case "add a role":
                         addRole()
@@ -101,26 +101,30 @@ function addDatabase(){
                         addEmployee()
                         break;
                     case "update an employee's information":
-                    console.log("made it 2")    
+                    console.log("made it 103")    
                     update();
                         break;
                 }
             })}
 function addDepartment() {
-    inquirer
-    .prompt([
+   console.log("made it 110)")
+    inquirer.prompt([
         {
-            type: 'list',
+            type: 'input',
             message: 'What is the name of the department you would like to add?',
             name: 'newDepartment',
         },
     ])
     .then((response) => {
-        db.query(`INSERT INTO department (name) VALUES (${resonse.newDepartment})`);
+        let department = response.NewDepartment      
+        db.query(`INSERT INTO department (name) VALUES ("${department}")`, function (err, results){});
+        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        console.table(results)
+    });
         restart();})};
                     
 function update(){
-    console.log ("made it 3")
+    console.log ("made it 123")
     db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
         console.log(tabledNames);
@@ -217,7 +221,7 @@ function firstNameChange(newName){
     db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 220")
         restart()})
 }
 function lastNameChange(changeName){
@@ -226,7 +230,7 @@ function lastNameChange(changeName){
     db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 229")
         restart()})
 }
 function roleId(){
@@ -251,7 +255,7 @@ function managerId(){
     //           });        
     //       });
 function restart(){
-console.log ("made it here, too")
+console.log ("made it 258")
 inquirer.prompt([
         {
             type: 'list',
@@ -267,12 +271,38 @@ inquirer.prompt([
             process.exit(0)
         }
 })}
-function addRole() {
 //this function should ask for the information required to add a new role and add it 
-db.query('SELECT role.title, role.salary, CONCAT (department.id," - ",department.name) as department FROM role  JOIN department ON department.id = role.department_id;', function (err, results) {
-    console.table(results);
-  })
-
+function addRole() {
+    db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
+            tabledDepartments = results;
+            console.log(tabledDepartments);
+            console.table(tabledDepartments);
+        const useDepartments=tabledDepartments.map(department=>{
+            const pObj = JSON.parse(JSON.stringify(department));
+            let newDepartment = Object.values(pObj);
+            return newDepartment;});
+            departments=useDepartments.flat();
+            console.log(departments);   
+    });
+    
+    
+    
+    
+    console.log("made it 110)")
+    inquirer.prompt([
+        {
+            type: 'input',
+            message: 'What is the name of the role you would like to add?',
+            name: 'newRole',
+        },
+    ])
+    .then((response) => {
+        let role = response.NewRole      
+        db.query(`INSERT INTO role (name) VALUES ("${role}")`, function (err, results){});
+        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        console.table(results)
+    });
+        restart();})};
 inquirer.prompt([
     {
         type: 'input',
@@ -293,11 +323,11 @@ inquirer.prompt([
 .then((response) => {
     db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${response.roleTitle}", ${respose.roleSalary},${response.departmentConnection});"`, function (err, results) {
         let test = results});
-        console.log ("made it here");
+        console.log ("made it 296");
     db.query(`SELECT * FROM role WHERE title = "${response.roleTitle}"`, function (err,results) {
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
-        console.log ("made it here")
+        console.log ("made it 300")
         restart()})});}
 
 function addEmployee(){
