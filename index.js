@@ -284,17 +284,26 @@ function addRole() {
             departments=useDepartments.flat();
             console.log(departments);   
     });
-    
-    
-    
-    
-    console.log("made it 110)")
+    console.log("made it 287)")
     inquirer.prompt([
         {
             type: 'input',
             message: 'What is the name of the role you would like to add?',
             name: 'newRole',
         },
+        {  
+        type: 'list',
+        message: 'What department is the role connected to?',
+        name: 'owningDepartment',
+        options: departments     
+        
+        },
+        {
+        type: 'input',
+        message: 'What is the salary of this role?',
+        name: 'assignedSalary'
+        }
+
     ])
     .then((response) => {
         let role = response.NewRole      
