@@ -20,8 +20,8 @@ const db = sql.createConnection(
 
 function init() {
     console.clear()
-    inquirer
-        .prompt([
+    console.log("this here")
+    inquirer.prompt([
             {
                 type: 'list',
                 message: 'What would you like to do with the database?',
@@ -30,8 +30,7 @@ function init() {
                     "View all departments",
                     "View all roles",
                     "View all employees",
-                    "Add to or update the database",
-                ]
+                    "Add to or update the database"]
             },
         ])
         .then((response) => {
@@ -48,9 +47,9 @@ function init() {
                 case "Add to or update the database":
                     changeDatabase()
                     break;
-            }
+            };
         })
-}
+};
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
@@ -121,14 +120,18 @@ function addDepartment() {
         },
     ])
     .then((response) => {
-        let department = response.NewDepartment      
-        db.query(`INSERT INTO department (name) VALUES ("${department}")`, function (err, results){});
-        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results)
-        {console.log (results)
-            console.log(`${department} added to departments`);
-        console.table(results)
-    });
-        restart();})};
+        console.log("response = "+response)
+        let department = response.newDepartment; 
+        console.log("department ="+department+" response = "+response);     
+        db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){
+            console.log(results);};
+        console.log(`${department} added to departments`)})};
+        db.query('SELECT id AS Department_Id, name AS Department FROM department', function (err, results) {
+            console.table(results);
+            restart();
+          });
+        // restart();
+
                     
 
         

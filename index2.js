@@ -34,6 +34,7 @@ function init() {
         .then((response) => {
             switch (response.shape) {
                 case "View all departments":
+                    console.log("line 37");
                     viewDepartments()
                     break;
                 case "View all roles":
@@ -328,7 +329,7 @@ inquirer.prompt([
         console.log (`You've just changed ${firstName}'s entry accordingly:`)
         console.table (results)
         console.log ("made it 300")
-        restart()})});}
+        restart()})});
 
 function addEmployee(){
 //this function should ask for the information required to add a new employee and and them
