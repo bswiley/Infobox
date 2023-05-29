@@ -6,18 +6,10 @@ let firstName;
 let lastName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
-const db = sql.createConnection(
-    {
-      host: 'localhost',
-      // MySQL username,
-      user: 'root',
-      // MySQL password
-      password: '4wm58f6t',
-      database: 'personel_db'
-    },
-    console.log(`Connected to the classlist_db database.`)
-);
+const db = sql.createConnection({host: 'localhost', user: 'root', password: '4wm58f6t',database: 'personel_db'},console.log(`Connected to the classlist_db database.`));
 
+//This functions starts the process by asking the user what they want to do and directs to other
+//functions based on the results.
 function init() {
     console.clear()
     console.log("this here")
@@ -50,9 +42,51 @@ function init() {
             };
         })
 };
+//These are the initial active parts of the code when run.  The two 'make' functions make lists that
+//are used in some of the inquirer questions.  The 'init' function calls the above function.
 makeNameList();
 makeDepartmentList();
 init();
+//this function can be seen as 'part2' of the init function because it asks more questions when 
+//'Add to or update the database" has been chosen.  It asks further questions and redirects 
+//accordingly
+function changeDatabase(){
+    
+                inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        message: 'What would you like to add or update on the database?',
+                        name: 'change',
+                        choices: [
+                            "add a department",
+                            "add a role",
+                            "add an employee",
+                            "update an employee's information",
+                        ]
+                    },
+                ])
+                .then((response) => {
+                    console.log ("made it 91");
+                    switch (response.change) {
+                        case "add a department":
+                        console.log("made it 94");   
+                        addDepartment()
+                            break;
+                        case "add a role":
+                            addRole()
+                            break;
+                        case "add an employee":
+                        addOrChange = "add";    
+                        addEmployee()
+                            break;
+                        case "update an employee's information":
+                        console.log("made it 103") 
+                        addOrChange = "Change";   
+                        makeNameList();
+                            break;
+                    }
+                })}
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
     db.query('SELECT id AS Department_Id, name AS Department FROM department', function (err, results) {
@@ -60,13 +94,52 @@ function viewDepartments() {
         restart();
       })
     };
+async function addDepartment() {
+    console.log("made it 110)")
+     const department = (await inquirer.prompt([
+         {
+             type: 'input',
+             message: 'What is the name of the department you would like to add?',
+             name: 'department'
+         },
+     ])).department
+         db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){
+             console.log(results);};
+         console.log(`\n${department} added to departments\n`);
+             restart()};
+
+//This function displays the role_id, title, department, and salary of the role
 function viewRoles() {
-// supposed to diplay the id, title, department, and salary of the role
         db.query('SELECT department.name AS Department, role.id AS Role_Id, role.title AS Title, role.salary AS Salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
             console.table(results);
             restart();
           })
         };
+//This function adds a new role
+async function addRole() {
+    console.log("made it 110)")
+     const role = (await inquirer.prompt([
+         {
+             type: 'input',
+             message: 'What is the title of the new role you would like to add?',
+             name: 'role'
+         },
+         {
+            type: 'list',
+            message: 'What department is this role part of?',
+            name: 'department',
+            choices: departments
+         },
+         {
+            type: 'input',
+            message: 'What is the salary for the new role?',
+            name: 'salary'
+         }
+     ])).role
+         db.query(`INSERT INTO role (name) VALUES ("${department}")`), function (err, results){
+             console.log(results);};
+         console.log(`\n${department} added to departments\n`);
+             restart()};       
 function viewEmployees() {
 // supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
             db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {
@@ -75,58 +148,8 @@ function viewEmployees() {
               })
             };
     
-function changeDatabase(){
-// Asks questions and directs to function to add/update desired information in database
-            inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    message: 'What would you like to add or update on the database?',
-                    name: 'change',
-                    choices: [
-                        "add a department",
-                        "add a role",
-                        "add an employee",
-                        "update an employee's information",
-                    ]
-                },
-            ])
-            .then((response) => {
-                console.log ("made it 91");
-                switch (response.change) {
-                    case "add a department":
-                    console.log("made it 94");   
-                    addDepartment()
-                        break;
-                    case "add a role":
-                        addRole()
-                        break;
-                    case "add an employee":
-                    addOrChange = "add";    
-                    addEmployee()
-                        break;
-                    case "update an employee's information":
-                    console.log("made it 103") 
-                    addOrChange = "Change";   
-                    makeNameList();
-                        break;
-                }
-            })}
-function addDepartment() {
-   console.log("made it 110)")
-    inquirer.prompt([
-        {
-            type: 'input',
-            message: 'What is the name of the department you would like to add?',
-            name: 'newDepartment',
-        },
-    ])
-    .then((response) => {
-       let department = response.newDepartment; 
-        db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){
-            console.log(results);};
-        console.log(`\n${department} added to departments`)})
-            restart();};
+
+
 
 
                     
@@ -326,32 +349,32 @@ function updateEmployee(){
             }
 //This function makes a list of names of employees to be used by different user options
 function makeNameList(){
-    console.log ("made it 123")
+    console.log ("made it 329")
     db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
-        console.log(tabledNames);
-        console.table(tabledNames);
+    
     const useNames=tabledNames.map(name=>{
         const pObj = JSON.parse(JSON.stringify(name));
         let newName = Object.values(pObj);
         return newName;});
         names=useNames.flat();
-        console.log(names);
+  
         return;
          })};
 
 //This function makes a list of names of departments to be used by different menu options
 function makeDepartmentList(){
- db.query('SELECT CONCAT(id," - ",name) AS department FROM department"', function (err, results){
+    
+ db.query('SELECT CONCAT(id," - ",name) AS department FROM department', function (err, results){
+ 
     tabledDepartments = results;
-    console.log(tabledDepartments);
-    console.table(tabledDepartments);
+ 
 const useDepartments=tabledDepartments.map(department=>{
     const pObj = JSON.parse(JSON.stringify(department));
     let newDepartment = Object.values(pObj);
     return newDepartment;});
     departments=useDepartments.flat();
-    console.log(departments);
+  
     return; 
 })}
          
@@ -368,9 +391,12 @@ function restart(){
                 ])
                 .then((response) => {
                     if (response.reStart==="Do something more"){
+                        makeNameList();
+                        makeDepartmentList();
                         init();
-                    }else{
+                        }else{
                         process.exit(0)
                     }
             })}
+
 
