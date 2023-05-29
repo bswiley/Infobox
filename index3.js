@@ -99,7 +99,24 @@ function viewDepartments() {
         };
 //This function asks the name of the department and adds it
 
-    
+ function addDepartment(){
+inquirer.prompt ([
+{type: 'input',
+message: 'What is the name of the department that you would like to add?',
+name: 'departmentToAdd'
+},
+
+
+
+
+])
+
+
+
+
+
+
+ }   
 
 
 

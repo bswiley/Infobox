@@ -1,6 +1,6 @@
 let departments;
 let names;
-let addOrChange;
+let addOrChange = "notchange"
 let employeesId;
 let firstName;
 let lastName;
@@ -50,6 +50,8 @@ function init() {
             };
         })
 };
+makeNameList();
+makeDepartmentList();
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
@@ -100,12 +102,12 @@ function changeDatabase(){
                         addRole()
                         break;
                     case "add an employee":
-                    addOrChange = add    
+                    addOrChange = "add";    
                     addEmployee()
                         break;
                     case "update an employee's information":
                     console.log("made it 103") 
-                    addOrChange = Change;   
+                    addOrChange = "Change";   
                     makeNameList();
                         break;
                 }
@@ -335,12 +337,8 @@ function makeNameList(){
         return newName;});
         names=useNames.flat();
         console.log(names);
-        if(addOrChange==="Change"){
-            updateE(names);
-        } 
-        else if(addOrChange==="add"){
-            roleLister();
-         }})};
+        return;
+         })};
 
 //This function makes a list of names of departments to be used by different menu options
 function makeDepartmentList(){
@@ -353,7 +351,8 @@ const useDepartments=tabledDepartments.map(department=>{
     let newDepartment = Object.values(pObj);
     return newDepartment;});
     departments=useDepartments.flat();
-    console.log(departments); 
+    console.log(departments);
+    return; 
 })}
          
 //Every menu option ends by sending here where the user is asked to quit or continue         
