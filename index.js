@@ -67,13 +67,14 @@ function changeDatabase(){
                     },
                 ])
                 .then((response) => {
-                    console.log ("made it 91");
+                    console.log ("made it 70");
                     switch (response.change) {
                         case "add a department":
-                        console.log("made it 94");   
+                        console.log("made it 73");   
                         addDepartment()
                             break;
                         case "add a role":
+                            console.log('made it 77');
                             addRole()
                             break;
                         case "add an employee":
@@ -123,22 +124,26 @@ async function addRole() {
              type: 'input',
              message: 'What is the title of the new role you would like to add?',
              name: 'role'
-         },
+         }])).role
+         const department = (await inquirer.prompt([
          {
             type: 'list',
             message: 'What department is this role part of?',
             name: 'department',
             choices: departments
-         },
+         }])).department
+         const salary = (await inquirer.prompt([
          {
             type: 'input',
             message: 'What is the salary for the new role?',
             name: 'salary'
          }
-     ])).role
-         db.query(`INSERT INTO role (name) VALUES ("${department}")`), function (err, results){
+     ])).salary
+         department_id = department.split(" ",3);
+         id = department_id[0];
+         db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${role}",${salary},${id})`), function (err, results){
              console.log(results);};
-         console.log(`\n${department} added to departments\n`);
+         console.log(`\n${role} added to roles\n`);
              restart()};       
 function viewEmployees() {
 // supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
@@ -273,49 +278,49 @@ function managerId(){
     //       });
 
 //this function should ask for the information required to add a new role and add it 
-function addRole() {
-    db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
-            tabledDepartments = results;
-            console.log(tabledDepartments);
-            console.table(tabledDepartments);
-        const useDepartments=tabledDepartments.map(department=>{
-            const pObj = JSON.parse(JSON.stringify(department));
-            let newDepartment = Object.values(pObj);
-            return newDepartment;});
-            departments=useDepartments.flat();
-            console.log(departments);   
-    });
-    console.log("made it 287)")
-    inquirer.prompt([
-        {
-        type: 'input',
-        message: 'What is the name of the role you would like to add?',
-        name: 'newRole',
-        },
-        {  
-        type: 'list',
-        message: 'What department is the role connected to?',
-        name: 'owningDepartment',
-        options: departments     
+// function addRole() {
+//     db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
+//             tabledDepartments = results;
+//             console.log(tabledDepartments);
+//             console.table(tabledDepartments);
+//         const useDepartments=tabledDepartments.map(department=>{
+//             const pObj = JSON.parse(JSON.stringify(department));
+//             let newDepartment = Object.values(pObj);
+//             return newDepartment;});
+//             departments=useDepartments.flat();
+//             console.log(departments);   
+//     });
+//     console.log("made it 287)")
+//     inquirer.prompt([
+//         {
+//         type: 'input',
+//         message: 'What is the name of the role you would like to add?',
+//         name: 'newRole',
+//         },
+//         {  
+//         type: 'list',
+//         message: 'What department is the role connected to?',
+//         name: 'owningDepartment',
+//         options: departments     
         
-        },
-        {
-        type: 'input',
-        message: 'What is the salary of this role?',
-        name: 'assignedSalary'
-        }
+//         },
+//         {
+//         type: 'input',
+//         message: 'What is the salary of this role?',
+//         name: 'assignedSalary'
+//         }
 
-    ])
-    .then((response) => {
-        const { newRole, owningDepartment, assignedSalary } = response 
-        console.log(owningDepartment)  
-        const dep = split(owningDepartment,3)
-        console.log(dep[0],dep[1],dep[2])   
-        db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRole}","${assignedSalary}","${dep}")`, function (err, results){});
-        db.query(`SELECT * FROM department WHERE name = "${newRole}")`, function (err, results){console.log(`${department} added to departments`);
-        console.table(results)
-    });
-        restart();})};
+//     ])
+//     .then((response) => {
+//         const { newRole, owningDepartment, assignedSalary } = response 
+//         console.log(owningDepartment)  
+//         const dep = split(owningDepartment,3)
+//         console.log(dep[0],dep[1],dep[2])   
+//         db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRole}","${assignedSalary}","${dep}")`, function (err, results){});
+//         db.query(`SELECT * FROM department WHERE name = "${newRole}")`, function (err, results){console.log(`${department} added to departments`);
+//         console.table(results)
+//     });
+        // restart();})};
 
 //this function should ask for the information required to add a new employee and and them
 function addEmployee(){
@@ -380,7 +385,7 @@ const useDepartments=tabledDepartments.map(department=>{
          
 //Every menu option ends by sending here where the user is asked to quit or continue         
 function restart(){
-            console.log ("made it 361")
+            console.log ("made it 385")
             inquirer.prompt([
                     {
                         type: 'list',
