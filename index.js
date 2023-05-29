@@ -1,3 +1,4 @@
+let departments;
 let names;
 let addOrChange;
 let employeesId;
@@ -53,21 +54,21 @@ function init() {
 init();
 function viewDepartments() {
 // supposed to diplay all the department names and id's in the CLI
-    db.query('SELECT id AS department_id, name AS department FROM department', function (err, results) {
+    db.query('SELECT id AS Department_Id, name AS Department FROM department', function (err, results) {
         console.table(results);
         restart();
       })
     };
 function viewRoles() {
 // supposed to diplay the id, title, department, and salary of the role
-        db.query('SELECT department.name AS department, role.id AS role_id, role.title AS role, role.salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
+        db.query('SELECT department.name AS Department, role.id AS Role_Id, role.title AS Title, role.salary AS Salary FROM role JOIN department ON department.id = role.department_id ORDER BY role.id', function (err, results) {
             console.table(results);
             restart();
           })
         };
 function viewEmployees() {
 // supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
-            db.query('SELECT department.name AS department, role.title, role.salary, employee.id, CONCAT(employee.first_name," ",employee.last_name) AS employee, CONCAT(manager.first_name," ",manager.last_name) AS manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {
+            db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {
                 console.table(results);
                 restart();
               })
@@ -122,33 +123,16 @@ function addDepartment() {
     .then((response) => {
         let department = response.NewDepartment      
         db.query(`INSERT INTO department (name) VALUES ("${department}")`, function (err, results){});
-        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results){console.log(`${department} added to departments`);
+        db.query(`SELECT * FROM department WHERE name = "${department}")`, function (err, results)
+        {console.log (results)
+            console.log(`${department} added to departments`);
         console.table(results)
     });
         restart();})};
                     
-function makeNameList(){
-    console.log ("made it 123")
-    db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
-        tabledNames = results;
-        console.log(tabledNames);
-        console.table(tabledNames);
-    const useNames=tabledNames.map(name=>{
-        const pObj = JSON.parse(JSON.stringify(name));
-        let newName = Object.values(pObj);
-        return newName;});
-        names=useNames.flat();
-        console.log(names);
-        if(addOrChange==="Change"){
-            updateE(names);
-        } 
-        else if(addOrChange==="add"){
-            roleLister();
-        }
-        
-})
 
-};
+        
+
     
 function updateE(nameList){
 inquirer
@@ -264,23 +248,7 @@ function managerId(){
     //                 }
     //           });        
     //       });
-function restart(){
-console.log ("made it 258")
-inquirer.prompt([
-        {
-            type: 'list',
-            message: 'Would you like to continue and do something more or stop here?',
-            name: 'reStart',
-            choices: ["Do something more","Stop here"]
-        },
-    ])
-    .then((response) => {
-        if (response.reStart==="Do something more"){
-            init();
-        }else{
-            process.exit(0)
-        }
-})}
+
 //this function should ask for the information required to add a new role and add it 
 function addRole() {
     db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
@@ -328,17 +296,6 @@ function addRole() {
 
 //this function should ask for the information required to add a new employee and and them
 function addEmployee(){
-    db.query("SELECT CONCAT(id," - ",first_name," ",last_name) AS manager FROM employee", function (err, results){
-        tabledDepartments = results;
-        console.log(tabledDepartments);
-        console.table(tabledDepartments);
-    const useDepartments=tabledDepartments.map(department=>{
-        const pObj = JSON.parse(JSON.stringify(department));
-        let newDepartment = Object.values(pObj);
-        return newDepartment;});
-        departments=useDepartments.flat();
-        console.log(departments); 
-    
     inquirer.prompt([
 {
     type: 'input',
@@ -362,11 +319,61 @@ function addEmployee(){
     message: 'What is the salary of this role?',
     name: 'assignedSalary'
     }
-
-}
-function updateEmployee(){
+    ])};
 //this function should ask for the information to update an employee and update them
+function updateEmployee(){
+
             }
+//This function makes a list of names of employees to be used by different user options
+function makeNameList(){
+    console.log ("made it 123")
+    db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
+        tabledNames = results;
+        console.log(tabledNames);
+        console.table(tabledNames);
+    const useNames=tabledNames.map(name=>{
+        const pObj = JSON.parse(JSON.stringify(name));
+        let newName = Object.values(pObj);
+        return newName;});
+        names=useNames.flat();
+        console.log(names);
+        if(addOrChange==="Change"){
+            updateE(names);
+        } 
+        else if(addOrChange==="add"){
+            roleLister();
+         }})};
 
-
+//This function makes a list of names of departments to be used by different menu options
+function makeDepartmentList(){
+ db.query('SELECT CONCAT(id," - ",name) AS department FROM department"', function (err, results){
+    tabledDepartments = results;
+    console.log(tabledDepartments);
+    console.table(tabledDepartments);
+const useDepartments=tabledDepartments.map(department=>{
+    const pObj = JSON.parse(JSON.stringify(department));
+    let newDepartment = Object.values(pObj);
+    return newDepartment;});
+    departments=useDepartments.flat();
+    console.log(departments); 
+})}
+         
+//Every menu option ends by sending here where the user is asked to quit or continue         
+function restart(){
+            console.log ("made it 258")
+            inquirer.prompt([
+                    {
+                        type: 'list',
+                        message: 'Would you like to continue and do something more or stop here?',
+                        name: 'reStart',
+                        choices: ["Do something more","Stop here"]
+                    },
+                ])
+                .then((response) => {
+                    if (response.reStart==="Do something more"){
+                        init();
+                    }else{
+                        process.exit(0)
+                    }
+            })}
 
