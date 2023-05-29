@@ -120,17 +120,12 @@ function addDepartment() {
         },
     ])
     .then((response) => {
-        console.log("response = "+response)
-        let department = response.newDepartment; 
-        console.log("department ="+department+" response = "+response);     
+       let department = response.newDepartment; 
         db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){
             console.log(results);};
-        console.log(`${department} added to departments`)})};
-        db.query('SELECT id AS Department_Id, name AS Department FROM department', function (err, results) {
-            console.table(results);
-            restart();
-          });
-        // restart();
+        console.log(`\n${department} added to departments`)})
+            restart();};
+
 
                     
 
@@ -363,7 +358,7 @@ const useDepartments=tabledDepartments.map(department=>{
          
 //Every menu option ends by sending here where the user is asked to quit or continue         
 function restart(){
-            console.log ("made it 258")
+            console.log ("made it 361")
             inquirer.prompt([
                     {
                         type: 'list',
