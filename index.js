@@ -40,7 +40,7 @@ function init() {
                     viewRoles()
                     break;
                 case "View all employees":
-                    viewEmployees()
+                viewEmployees()
                     break;
                 case "Add to or update the database":
                     changeDatabase()
@@ -74,7 +74,7 @@ inquirer
     },
 ])
 .then((response) => {
-     switch (response.change) {
+    switch (response.change) {
         
         case "add a department":
         addDepartment()
@@ -163,13 +163,15 @@ console.log(`\n${role} was added to roles\n`);
 
 restart()};       
 
+
 //This function will produce a table displaying department, title, salary, employee id the employee's name, and their manager's name
- function viewEmployees() {
+function viewEmployees() {
 
-db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {})
-
+db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id', function (err, results) {
+console.table(results);
 restart();
-};
+})};
+
  
  //This function will ask the questions needed to add an employee and then adds one           
 async function addEmployee(){
@@ -225,20 +227,20 @@ restart();}
 async function updateEmployee (){
 let employee = (await inquirer.prompt([
  {
-    type: 'list',
-    message: "What employee do you want to change?",
-    name: 'employee',
-    choices: names
+type: 'list',
+message: "What employee do you want to change?",
+name: 'employee',
+choices: names
  }])).employee;
  let tempvariable = employee.split(" - ",2);
-    employeeId = tempvariable[0];
-    employee = tempvariable[1];
-    const whatChange = (await inquirer.prompt([
+employeeId = tempvariable[0];
+employee = tempvariable[1];
+const whatChange = (await inquirer.prompt([
 {
-    type: 'list',
-    message: `What details do you want to change for ${employee}?`,
-    name: 'whatChange',
-    choices: ['First Name','Last name', 'Title', 'Manager']
+type: 'list',
+message: `What details do you want to change for ${employee}?`,
+name: 'whatChange',
+choices: ['First Name','Last name', 'Title', 'Manager']
 }])).whatChange
 
 switch (whatChange) {
@@ -337,7 +339,7 @@ const useDepartments=tabledDepartments.map(department=>{
 function makeRoleList(){
 db.query("CREATE TABLE manager SELECT * FROM employee", function (err, results){});
 
-db.query('SELECT CONCAT(id," - ",title) AS role FROM role', function (err, results){});
+db.query('SELECT CONCAT(id," - ",title) AS role FROM role', function (err, results){;
 
 tabledRoles = results;
 
@@ -346,19 +348,20 @@ const pObj = JSON.parse(JSON.stringify(role));
 let newRole = Object.values(pObj);
 return newRole;});
 roles=useRoles.flat();
-return;}
+return;})}
 
 //This function (makeNameList) is the same as the other two.  The names are actually used quite often in the menu choices both
 //to choose an employee by name as well as to choose their manager.  On use, however, the id numbers attached is what is actually used.
 function makeNameList(){
     
-db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {});
+db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
 
-tabledNames = results;
+const tabledNames = results;
 
 const useNames=tabledNames.map(name=>{
 const pObj = JSON.parse(JSON.stringify(name));
 let newName = Object.values(pObj);
+return newName;});
 names=useNames.flat();
 return;})};
          
