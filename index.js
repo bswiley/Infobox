@@ -87,7 +87,6 @@ function changeDatabase(){
                             break;
                         case "update an employee's information":
                         console.log("made it 103") 
-                        addOrChange = "Change";   
                         updateEmployee();
                             break;
                     }
@@ -203,15 +202,16 @@ async function addEmployee(){
     
 //This function will ask questions about updating an employee's information and do that
 async function updateEmployee (){
-            const employee = (await inquirer.prompt([
+            let employee = (await inquirer.prompt([
      {
         type: 'list',
         message: "What employee do you want to change?",
-        name: 'employee'
+        name: 'employee',
+        choices: names
      }])).employee;
-     let tempvariable = employee.split(" ",3);
+     let tempvariable = employee.split(" - ",2);
         employeeId = tempvariable[0];
-        employee = tempvariable[2];
+        employee = tempvariable[1];
         const whatChange = (await inquirer.prompt([
             {
                 type: 'list',
@@ -228,8 +228,7 @@ async function updateEmployee (){
                         message: `What is ${employee}'s new first name?`,
                         name: 'newFirst'
                         }])).newFirst 
-                        db.query(`UPDATE employee SET first_name = ${newFirst} WHERE id = ${employeeId}`), function (err, results){} 
-                        db.query(`UPDATE manager SET first_name = ${newFirst} WHERE id = ${employeeId}`), function (err, results){} 
+                        db.query(`UPDATE employee SET first_name = "${newFirst}" WHERE id = ${employeeId}`), function (err, results){}  
                         console.log (`\n${employee}'s first name was changed to ${newFirst}\n`);
                         restart();
                         break;
@@ -241,8 +240,7 @@ async function updateEmployee (){
                         message: `What is ${employee}'s new last name?`,
                         name: 'newLast'
                         }])).newLast 
-                        db.query(`UPDATE employee SET last_name = ${newLast} WHERE id = ${employeeId}`), function (err, results){} 
-                        db.query(`UPDATE employee SET last_name = ${newLast} WHERE id = ${employeeId}`), function (err, results){}
+                        db.query(`UPDATE employee SET last_name = "${newLast}" WHERE id = ${employeeId}`), function (err, results){} 
                         console.log (`\n${employee}'s last name was changed to ${newLast}\n`);
                         restart();
                         break;
@@ -251,7 +249,7 @@ async function updateEmployee (){
                     const title =(await inquirer.prompt([
                         {
                             type: 'list',
-                            message: `What is ${employee}'s new last name?`,
+                            message: `What is ${employee}'s new title?`,
                             name: 'title',
                             choices: names
                             }])).title
@@ -263,18 +261,18 @@ async function updateEmployee (){
                             break;
                 case 'Manager':
                 console.log("made it 103") 
-                const manager =(await inquirer.prompt([
+                let manager =(await inquirer.prompt([
                     {
                         type: 'list',
-                        message: `What is ${employee}'s new last name?`,
+                        message: `Who is ${employee}'s new manager?`,
                         name: 'manager',
                         choices: names
                         }])).manager
-                        tempvariable = manager.split(" - ",2);
-                        manager = tempvariable[1];
-                        let managerId = tempvariable[0]; 
-                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){} 
-                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){}
+                        let tempVariable = manager.split(" - ",2);
+                        manager = tempVariable[1];
+                        let managerId = tempVariable[0]; 
+                        console.log(manager+"    "+managerId);
+                        db.query(`UPDATE employee SET manager_id = ${managerId} WHERE id = ${employeeId}`), function (err, results){} 
                         console.log (`\n${employee}'s manager was changed to ${manager}\n`);
                         restart();    
                         break;
@@ -297,7 +295,7 @@ async function updateEmployee (){
 
     
  
-//this function should ask for the information to update an employee and update them
+
 
 
 //This function makes a list of names of employees to be used by different user options
