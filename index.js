@@ -1,3 +1,4 @@
+let roles;
 let departments;
 let names;
 let addOrChange = "notchange"
@@ -45,6 +46,7 @@ function init() {
 //These are the initial active parts of the code when run.  The two 'make' functions make lists that
 //are used in some of the inquirer questions.  The 'init' function calls the above function.
 makeNameList();
+makeRoleList();
 makeDepartmentList();
 init();
 //this function can be seen as 'part2' of the init function because it asks more questions when 
@@ -84,7 +86,7 @@ function changeDatabase(){
                         case "update an employee's information":
                         console.log("made it 103") 
                         addOrChange = "Change";   
-                        makeNameList();
+                        updateEmployee();
                             break;
                     }
                 })}
@@ -106,7 +108,7 @@ async function addDepartment() {
      ])).department
          db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){
              console.log(results);};
-         console.log(`\n${department} added to departments\n`);
+         console.log(`\n${department} was added to departments\n`);
              restart()};
 
 //This function displays the role_id, title, department, and salary of the role
@@ -143,18 +145,140 @@ async function addRole() {
          id = department_id[0];
          db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${role}",${salary},${id})`), function (err, results){
              console.log(results);};
-         console.log(`\n${role} added to roles\n`);
+         console.log(`\n${role} was added to roles\n`);
              restart()};       
-function viewEmployees() {
-// supposed to diplay the id, names, titles, departments, salaries, and managers of all employees
-            db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {
-                console.table(results);
-                restart();
-              })
-            };
-    
+
+//This function will produce a table displaying the information for all the employees
+ function viewEmployees() {
+    db.query('SELECT department.name AS Department, role.title AS Title, role.salary AS Salary, employee.id AS Employee_Id, CONCAT(employee.first_name," ",employee.last_name) AS Employee, CONCAT(manager.first_name," ",manager.last_name) AS Manager FROM role LEFT JOIN department ON department.id = role.department_id LEFT JOIN employee ON role.id = employee.role_id LEFT JOIN manager ON employee.manager_id = manager.id ORDER BY employee.id',function (err, results) {
+    console.table(results);
+    restart();
+  })
+};
+ 
+ //This function will ask the questions needed to add an employee and then add them           
+async function addEmployee(){
+    names.push('0 - no one');
+    const newFirst = (await inquirer.prompt([
+{
+    type: 'input',
+    message: 'What is the first_name of the new employee?',
+    name: 'newFirst',
+    }])).newFirst
+    const newLast = (await inquirer.prompt([
+    {
+        type: 'input',
+        message: 'What is the last_name of the new employee?',
+        name: 'newLast',
+        }])).newLast
+    const assignedRole = (await inquirer.prompt([
+    {  
+    type: 'list',
+    message: 'What role does this employee fill?',
+    name: 'assignedRole',
+    choices: roles     
+        }])).assignedRole
+
+    const employeesManager = (await inquirer.prompt([
+    {
+    type: 'list',
+    message: "Who is this employee's manager?",
+    name: 'employeesManager',
+    choices: names
+    }])).employeesManager
+        let tempvariable = employeesManager.split(" ",3);
+        let managerId = tempvariable[0];
+        tempvariable = assignedRole.split(" ",3);
+        let role = tempvariable[0];
+        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newFirst}","${newLast}",${role},${managerId})`), function (err, results){}
+            console.log(`\n${newFirst} ${newLast} was added to employees\n`);
+        restart();
+
+    }
+//This function will ask questions about updating an employee's information and do that
+async function updateEmployee (){
+            const employee = (await inquirer.prompt([
+     {
+        type: 'list',
+        message: "What employee do you want to change?",
+        name: 'employee'
+     }])).employee;
+     let tempvariable = employee.split(" ",3);
+        employeeId = tempvariable[0];
+        employee = tempvariable[2];
+        const whatChange = (await inquirer.prompt([
+            {
+                type: 'list',
+                message: `What details do you want to change for ${employee}?`,
+                name: 'whatChange'
+                choices: ['First Name','Last name', 'Title', 'Manager']
+            }])).whatChange
+            switch (whatChange) {
+                case 'First Name':
+                console.log("made it 219"); 
+                const newFirst =(await inquirer.prompt([
+                    {
+                        type: 'input',
+                        message: `What is ${employee}'s new first name?`,
+                        name: 'newFirst'
+                        }])).newFirst 
+                        db.query(`UPDATE employee SET first_name = ${newFirst} WHERE employee_id = ${employeeId}`), function (err, results){}  
+                        console.log (`\n${employee}'s first name was changed to ${newFirst}\n`);
+                        restart();
+                addDepartment()
+                    break;
+                case 'Last name':
+                    console.log('made it 223');
+                    const newLast =(await inquirer.prompt([
+                        {
+                            type: 'input',
+                            message: `What is ${employee}'s new last name?`,
+                            name: 'newLast'
+                            }])).newLast 
+                            db.query(`UPDATE employee SET last_name = ${newLast} WHERE employee_id = ${employeeId}`), function (err, results){}  
+                            console.log (`\n${employee}'s last name was changed to ${newLast}\n`);
+                            restart();
+                    break;
+                case 'Title':
+                    console.log('made it 223');
+                    const title =(await inquirer.prompt([
+                        {
+                            type: 'list',
+                            message: `What is ${employee}'s new last name?`,
+                            name: 'title',
+                            choices: names
+                            }])).title
+                            let tempvariable = names.split(" ",3);
+                            titleId =tempvariable[0]; 
+                            db.query(`UPDATE employee SET role_id = ${titleId} WHERE employee_id = ${employeeId}`), function (err, results){}  
+                            console.log (`\n${employee}'s title was changed to ${titleId}\n`);
+                            restart();   
+
+                    break;
+                case 'Manager':
+                console.log("made it 103") 
+                const manager =(await inquirer.prompt([
+                    {
+                        type: 'list',
+                        message: `What is ${employee}'s new last name?`,
+                        name: 'manager',
+                        choices: names
+                        }])).manager
+                        let tempvariable = names.split(" - ",2);
+                        let manager = tempvariable[1];
+                        let managerId = tempvariable[0]; 
+                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){}  
+                        console.log (`\n${employee}'s manager was changed to ${manager}\n`);
+                        restart();    
+                        break;
 
 
+            }
+
+     }           
+
+
+    }
 
 
                     
@@ -162,196 +286,10 @@ function viewEmployees() {
         
 
     
-function updateE(nameList){
-inquirer
-    .prompt([
-        {
-            type: 'list',
-            message: 'Whose data would you like to change?',
-            name: 'change',
-            choices: nameList
-        },
-    ])
-    .then((response) => {
-       choice = response.change;
-       console.log ("Choice = "+choice)
-       list=choice.split(' ',4);
-       employeesId = list[0];
-       firstName = list[2]
-       lastName = list [3]
-       console.log ("employeesId = "+employeesId)
-       console.log ("firstName = "+firstName)
-       changeHow(firstName);
-    })  
-
-    };
-
-function changeHow(firstName){
-        console.log("firstName = "+firstName)
-       db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err, results) {
-        let test = results;
-        console.table(test);})
-    
-        inquirer
-        .prompt([
-            {
-                type: 'list',
-                message: `What part of ${firstName}'s data would you like to change?`,
-                name: 'what',
-                choices: [`${firstName}'s first name`,
-                `${firstName}'s last name`,
-                `${firstName}'s role`,
-                `${firstName}'s manager`]
-            },
-        ])
-        .then((response) => {
-           switch(response.what){
-            case `${firstName}'s first_name`:
-                inquirer
-                .prompt([
-                    {
-                        type: 'input',
-                        message: `What should ${firstName}'s new first name be?`,
-                        name: 'newName',
-                    },
-                ])
-                .then((response) => {
-                firstNameChange(response.newName)});
-            break;
-            case `${firstName}'s last_name`:
-                inquirer
-                .prompt([
-                    {
-                        type: 'input',
-                        message: `What should ${firstName}'s new last name be?`,
-                        name: 'newName',
-                    },
-                ])
-                .then((response) => {
-                lastNameChange(response.newName)})
-            break;
-            case`${firstName}'s role_id`:
-            roleId()
-            break;
-            case `${firstName}'s manager_id`:
-            managerId
-            break;
-                }})};
-function firstNameChange(newName){
-    db.query(`UPDATE employee SET first_name = "${newName}" WHERE id = "${employeesId}"`, function (err, results) {
-        let test = results});
-    db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
-        console.log (`You've just changed ${firstName}'s entry accordingly:`)
-        console.table (results)
-        console.log ("made it 220")
-        restart()})
-}
-function lastNameChange(changeName){
-    db.query(`UPDATE employee SET last_name = "${changeName}" WHERE id = "${employeesId}"`, function (err, results) {
-        let test = results});
-    db.query(`SELECT * FROM employee WHERE id = "${employeesId}"`, function (err,results) {
-        console.log (`You've just changed ${firstName}'s entry accordingly:`)
-        console.table (results)
-        console.log ("made it 229")
-        restart()})
-}
-function roleId(){
-
-}
-function managerId(){
-
-}
-
-
-
-
-
-
-    // db.query('SELECT CONCAT(first_name," ",last_name) AS name, id FROM employee ORDER BY last_name', function (err, results) {
-    //         nameID = results;
-    //         const employeeID = nameID.filter(function(person) {
-    //             if (person.name === 'Ilie Albenscu'){
-    //                 console.log (person.id)
-    //                 updateEmployee(person.id)
-    //                 }
-    //           });        
-    //       });
-
-//this function should ask for the information required to add a new role and add it 
-// function addRole() {
-//     db.query("SELECT CONCAT(id," - ",name) AS department FROM department", function (err, results){
-//             tabledDepartments = results;
-//             console.log(tabledDepartments);
-//             console.table(tabledDepartments);
-//         const useDepartments=tabledDepartments.map(department=>{
-//             const pObj = JSON.parse(JSON.stringify(department));
-//             let newDepartment = Object.values(pObj);
-//             return newDepartment;});
-//             departments=useDepartments.flat();
-//             console.log(departments);   
-//     });
-//     console.log("made it 287)")
-//     inquirer.prompt([
-//         {
-//         type: 'input',
-//         message: 'What is the name of the role you would like to add?',
-//         name: 'newRole',
-//         },
-//         {  
-//         type: 'list',
-//         message: 'What department is the role connected to?',
-//         name: 'owningDepartment',
-//         options: departments     
-        
-//         },
-//         {
-//         type: 'input',
-//         message: 'What is the salary of this role?',
-//         name: 'assignedSalary'
-//         }
-
-//     ])
-//     .then((response) => {
-//         const { newRole, owningDepartment, assignedSalary } = response 
-//         console.log(owningDepartment)  
-//         const dep = split(owningDepartment,3)
-//         console.log(dep[0],dep[1],dep[2])   
-//         db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${newRole}","${assignedSalary}","${dep}")`, function (err, results){});
-//         db.query(`SELECT * FROM department WHERE name = "${newRole}")`, function (err, results){console.log(`${department} added to departments`);
-//         console.table(results)
-//     });
-        // restart();})};
-
-//this function should ask for the information required to add a new employee and and them
-function addEmployee(){
-    inquirer.prompt([
-{
-    type: 'input',
-    message: 'What is the first_name of the new employee?',
-    name: 'newFirst',
-    },
-    {
-        type: 'input',
-        message: 'What is the last_name of the new employee?',
-        name: 'newLast',
-        },
-    {  
-    type: 'list',
-    message: 'What department is the role connected to?',
-    name: 'owningDepartment',
-    options: departments     
-    
-    },
-    {
-    type: 'input',
-    message: 'What is the salary of this role?',
-    name: 'assignedSalary'
-    }
-    ])};
+ 
 //this function should ask for the information to update an employee and update them
-function updateEmployee(){
 
-            }
+
 //This function makes a list of names of employees to be used by different user options
 function makeNameList(){
     console.log ("made it 329")
@@ -382,6 +320,21 @@ const useDepartments=tabledDepartments.map(department=>{
   
     return; 
 })}
+
+function makeRoleList(){
+    
+    db.query('SELECT CONCAT(id," - ",title) AS role FROM role', function (err, results){
+    
+       tabledRoles = results;
+    
+   const useRoles=tabledRoles.map(role=>{
+       const pObj = JSON.parse(JSON.stringify(role));
+       let newRole = Object.values(pObj);
+       return newRole;});
+       roles=useRoles.flat();
+     
+       return; 
+   })}
          
 //Every menu option ends by sending here where the user is asked to quit or continue         
 function restart(){
@@ -397,6 +350,7 @@ function restart(){
                 .then((response) => {
                     if (response.reStart==="Do something more"){
                         makeNameList();
+                        makeRoleList();
                         makeDepartmentList();
                         init();
                         }else{
