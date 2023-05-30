@@ -1,7 +1,9 @@
+let tempvariable;
+let role;
+let assignedRole;
 let roles;
 let departments;
 let names;
-let addOrChange = "notchange"
 let employeesId;
 let firstName;
 let lastName;
@@ -162,23 +164,24 @@ async function addEmployee(){
     const newFirst = (await inquirer.prompt([
 {
     type: 'input',
-    message: 'What is the first_name of the new employee?',
+    message: 'What is the first name of the new employee?',
     name: 'newFirst',
     }])).newFirst
     const newLast = (await inquirer.prompt([
     {
         type: 'input',
-        message: 'What is the last_name of the new employee?',
+        message: 'What is the last name of the new employee?',
         name: 'newLast',
         }])).newLast
-    const assignedRole = (await inquirer.prompt([
+    assignedRole = (await inquirer.prompt([
     {  
     type: 'list',
     message: 'What role does this employee fill?',
     name: 'assignedRole',
     choices: roles     
         }])).assignedRole
-
+        let newvariable = assignedRole.split(" ",3);
+        role = newvariable[0];
     const employeesManager = (await inquirer.prompt([
     {
     type: 'list',
@@ -188,13 +191,16 @@ async function addEmployee(){
     }])).employeesManager
         let tempvariable = employeesManager.split(" ",3);
         let managerId = tempvariable[0];
+        if(managerId===0){
+            managerId=NULL}
         tempvariable = assignedRole.split(" ",3);
-        let role = tempvariable[0];
-        db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${newFirst}","${newLast}",${role},${managerId})`), function (err, results){}
+        role = tempvariable[0];
+        db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES ("${newFirst}","${newLast}",${role})`), function (err, results){}
+        db.query(`INSERT INTO manager (first_name, last_name, role_id, manager_id) VALUES ("${newFirst}","${newLast}",${role},${managerId})`), function (err, results){}
             console.log(`\n${newFirst} ${newLast} was added to employees\n`);
-        restart();
+        restart();}
 
-    }
+    
 //This function will ask questions about updating an employee's information and do that
 async function updateEmployee (){
             const employee = (await inquirer.prompt([
@@ -210,7 +216,7 @@ async function updateEmployee (){
             {
                 type: 'list',
                 message: `What details do you want to change for ${employee}?`,
-                name: 'whatChange'
+                name: 'whatChange',
                 choices: ['First Name','Last name', 'Title', 'Manager']
             }])).whatChange
             switch (whatChange) {
@@ -222,23 +228,24 @@ async function updateEmployee (){
                         message: `What is ${employee}'s new first name?`,
                         name: 'newFirst'
                         }])).newFirst 
-                        db.query(`UPDATE employee SET first_name = ${newFirst} WHERE employee_id = ${employeeId}`), function (err, results){}  
+                        db.query(`UPDATE employee SET first_name = ${newFirst} WHERE id = ${employeeId}`), function (err, results){} 
+                        db.query(`UPDATE manager SET first_name = ${newFirst} WHERE id = ${employeeId}`), function (err, results){} 
                         console.log (`\n${employee}'s first name was changed to ${newFirst}\n`);
                         restart();
-                addDepartment()
-                    break;
+                        break;
                 case 'Last name':
-                    console.log('made it 223');
-                    const newLast =(await inquirer.prompt([
-                        {
-                            type: 'input',
-                            message: `What is ${employee}'s new last name?`,
-                            name: 'newLast'
-                            }])).newLast 
-                            db.query(`UPDATE employee SET last_name = ${newLast} WHERE employee_id = ${employeeId}`), function (err, results){}  
-                            console.log (`\n${employee}'s last name was changed to ${newLast}\n`);
-                            restart();
-                    break;
+                console.log('made it 223');
+                const newLast =(await inquirer.prompt([
+                    {
+                        type: 'input',
+                        message: `What is ${employee}'s new last name?`,
+                        name: 'newLast'
+                        }])).newLast 
+                        db.query(`UPDATE employee SET last_name = ${newLast} WHERE id = ${employeeId}`), function (err, results){} 
+                        db.query(`UPDATE employee SET last_name = ${newLast} WHERE id = ${employeeId}`), function (err, results){}
+                        console.log (`\n${employee}'s last name was changed to ${newLast}\n`);
+                        restart();
+                        break;
                 case 'Title':
                     console.log('made it 223');
                     const title =(await inquirer.prompt([
@@ -250,11 +257,10 @@ async function updateEmployee (){
                             }])).title
                             let tempvariable = names.split(" ",3);
                             titleId =tempvariable[0]; 
-                            db.query(`UPDATE employee SET role_id = ${titleId} WHERE employee_id = ${employeeId}`), function (err, results){}  
+                            db.query(`UPDATE employee SET role_id = ${titleId} WHERE employee_id = ${employeeId}`), function (err, results){}   
                             console.log (`\n${employee}'s title was changed to ${titleId}\n`);
-                            restart();   
-
-                    break;
+                            restart(); 
+                            break;
                 case 'Manager':
                 console.log("made it 103") 
                 const manager =(await inquirer.prompt([
@@ -264,10 +270,11 @@ async function updateEmployee (){
                         name: 'manager',
                         choices: names
                         }])).manager
-                        let tempvariable = names.split(" - ",2);
-                        let manager = tempvariable[1];
+                        tempvariable = manager.split(" - ",2);
+                        manager = tempvariable[1];
                         let managerId = tempvariable[0]; 
-                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){}  
+                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){} 
+                        db.query(`UPDATE employee SET manager_id = "${managerId}" WHERE employee_id = ${employeeId}`), function (err, results){}
                         console.log (`\n${employee}'s manager was changed to ${manager}\n`);
                         restart();    
                         break;
@@ -278,7 +285,10 @@ async function updateEmployee (){
      }           
 
 
-    }
+
+
+
+
 
 
                     
@@ -292,6 +302,8 @@ async function updateEmployee (){
 
 //This function makes a list of names of employees to be used by different user options
 function makeNameList(){
+    
+    
     console.log ("made it 329")
     db.query('SELECT CONCAT(id," - ",first_name," ",last_name) AS name FROM employee ORDER BY id', function (err, results) {
         tabledNames = results;
@@ -322,7 +334,7 @@ const useDepartments=tabledDepartments.map(department=>{
 })}
 
 function makeRoleList(){
-    
+    db.query("CREATE TABLE manager SELECT * FROM employee", function (err, results){});
     db.query('SELECT CONCAT(id," - ",title) AS role FROM role', function (err, results){
     
        tabledRoles = results;
@@ -338,6 +350,7 @@ function makeRoleList(){
          
 //Every menu option ends by sending here where the user is asked to quit or continue         
 function restart(){
+    db.query("DROP TABLE manager", function (err, results){});
             console.log ("made it 385")
             inquirer.prompt([
                     {

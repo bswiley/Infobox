@@ -36,5 +36,3 @@ VALUES
 ("Yukio","Park",6 ,1);
 
 CREATE TABLE manager SELECT * FROM employee;
-       
-
