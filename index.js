@@ -9,7 +9,7 @@ let firstName;
 let lastName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
-const db = sql.createConnection({host: 'localhost', user: 'root', password: '4wm58f6t',database: 'personel_db'},console.log(`Connected to the classlist_db database.`));
+const db = sql.createConnection({host: 'localhost', user: 'root', password: '4wm58f6t',database: 'personel_db'},(`Connected to the classlist_db database.`));
 //Aside from the first two menus, most of the functions are arranged by what part of the database they are working on.
 //(i.e. first all department functions, then role functions, and finally employee functions).
 //At the end are functions involved with the beginning and end, generally 'administrative' functions involved with both.
@@ -114,10 +114,10 @@ const department = (await inquirer.prompt([
     },
 ])).department
 
-    db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){};
-    console.log(`\n${department} was added to departments\n`);
-    restart()};
+db.query(`INSERT INTO department (name) VALUES ("${department}")`), function (err, results){};
 
+console.log(`\n${department} was added to departments\n`);
+restart()};
 //This function (viewRoles) displays the role_id, title, department, and salary of the role
 
 function viewRoles() {
@@ -158,9 +158,10 @@ department_id = department.split(" ",3);
 id = department_id[0];
 
 db.query(`INSERT INTO role (title,salary,department_id) VALUES ("${role}",${salary},${id})`), function (err, results){};
+
 console.log(`\n${role} was added to roles\n`);
 
-norestart()};       
+restart()};       
 
 //This function will produce a table displaying department, title, salary, employee id the employee's name, and their manager's name
  function viewEmployees() {
