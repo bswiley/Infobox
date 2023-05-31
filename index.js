@@ -149,7 +149,7 @@ const department = (await inquirer.prompt([
 const salary = (await inquirer.prompt([
 {
    type: 'input',
-   message: 'What is the salary for the new role?',
+   message: "What is the salary for the new role? (please don't use commas)",
    name: 'salary'
 }
 ])).salary
