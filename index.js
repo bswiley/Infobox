@@ -9,7 +9,7 @@ let firstName;
 let lastName;
 const inquirer = require("inquirer");
 const sql = require("mysql2");
-const db = sql.createConnection({host: 'localhost', user: 'root', password: '4wm58f6t',database: 'personel_db'},(`Connected to the classlist_db database.`));
+const db = sql.createConnection({host: 'localhost', user: 'root', password: '',database: 'personel_db'},(`Connected to the classlist_db database.`));
 //Aside from the first two menus, most of the functions are arranged by what part of the database they are working on.
 //(i.e. first all department functions, then role functions, and finally employee functions).
 //At the end are functions involved with the beginning and end, generally 'administrative' functions involved with both.
