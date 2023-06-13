@@ -26,8 +26,7 @@ This project is a company employee database that can be changed through node.js.
 The project required mysql, node, inquirer, and mysql2.  Once the repsitory is cloned, mysql needs to be run in the database folder and the 'schema.sql' and 'seeds.sql' files need to be SOURCED.  Then the user needs to perform an "npm install" to install the dependencies that are required to run the application.  Finally, variable 'db' on line 12 of the index.js file requires a password.  Enter your sql root password between the single quotes after "password:".  When that is accomplished simply use the command "node index.js" to run the file.
 
 ## Usage
-The program does all the sql queries so a user need only answer the questions asked in the command-line interface.  Here is a video displaying how it works.
-<video src="https://drive.google.com/file/d/1SekgI9xepSnxASSf8bYmcfLl-3Finr-p/view?usp=sharing" width="640" height="480" controls></video> 
+The program does all the sql queries so a user need only answer the questions asked in the command-line interface.  Here is a video (https://drive.google.com/file/d/1SekgI9xepSnxASSf8bYmcfLl-3Finr-p/view?usp=sharing) displaying how it works. 
 
 ## Contributing
 Any request for contributions can be addressed to my email address below. 
